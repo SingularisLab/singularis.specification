@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Singularis.Specification.Domain", "Singularis.Specification.Domain\Singularis.Specification.Domain.csproj", "{2253D622-9ED8-469A-978F-630AC39CE605}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Singularis.Specification.Executor.Nhibernate", "Singularis.Specification.Executor.Nhibernate\Singularis.Specification.Executor.Nhibernate.csproj", "{03D555C9-D63E-47DD-A40C-E745CCC72E24}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2253D622-9ED8-469A-978F-630AC39CE605}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2253D622-9ED8-469A-978F-630AC39CE605}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2253D622-9ED8-469A-978F-630AC39CE605}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2253D622-9ED8-469A-978F-630AC39CE605}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03D555C9-D63E-47DD-A40C-E745CCC72E24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03D555C9-D63E-47DD-A40C-E745CCC72E24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03D555C9-D63E-47DD-A40C-E745CCC72E24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03D555C9-D63E-47DD-A40C-E745CCC72E24}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
