@@ -10,18 +10,17 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Build
-      uses: baruchiro/github-actions@0.0.1
+      uses: actions/setup-dotnet@v1
       with:
-        args: "build src/Singularis.Specification/Singularis.Specification.sln"        
+        dotnet-version: '2.2.8'
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.NUGET_SECRET}}
+    - run: dotnet build src/Singularis.Specification/Singularis.Specification.sln"        
+    - name: Pack Singularis.Specification.Domain
+      run: dotnet pack --configuration Release src/Singularis.Specification/Singularis.Specification.Domain/Singularis.Specification.Domain.csproj
     - name: Publish Singularis.Specification.Domain
-      uses: rohith/publish-nuget@v1.2.0
-      with:
-        project_dir: src/Singularis.Specification/Singularis.Specification.Domain/        
-        tag_format: v*
-        nuget_key: ${{secrets.NUGET_SECRET}}
-    - name: Publish Singularis.Specification.Domain
-      uses: rohith/publish-nuget@v1.2.0
-      with:
-        project_dir: src/Singularis.Specification/Singularis.Specification.Executor.Nhibernate/        
-        tag_format: v*
-        nuget_key: ${{secrets.NUGET_SECRET}}
+      run: dotnet nuget push src/Singularis.Specification/Singularis.Specification.Domain/bin/Release/*.nupkg
+    - name: Pack Singularis.Specification.Executor.Nhibernate
+      run: dotnet pack --configuration Release src/Singularis.Specification/Singularis.Specification.Executor.Nhibernate/Singularis.Specification.Executor.Nhibernate.csproj
+    - name: Singularis.Specification.Executor.Nhibernate
+      run: dotnet nuget push src/Singularis.Specification/Singularis.Specification.Executor.Nhibernate/bin/RElease/*.nupkg
