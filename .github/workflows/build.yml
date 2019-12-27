@@ -25,4 +25,4 @@ jobs:
     - name: Pack Singularis.Specification.Executor.Nhibernate
       run: dotnet pack --configuration Release src/Singularis.Specification/Singularis.Specification.Executor.Nhibernate/Singularis.Specification.Executor.Nhibernate.csproj
     - name: Singularis.Specification.Executor.Nhibernate
-      run: dotnet nuget push src/Singularis.Specification/Singularis.Specification.Executor.Nhibernate/bin/RElease/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_SECRET}}
+      run: dotnet nuget push src/Singularis.Specification/Singularis.Specification.Executor.Nhibernate/bin/Release/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_SECRET}}
