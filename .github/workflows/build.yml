@@ -1,0 +1,23 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build
+      uses: baruchiro/github-actions@0.0.1
+    - name: Publish Singularis.Specification.Domain
+      uses: rohith/publish-nuget@v1.2.0
+      with:
+        project_dir: src/Singularis.Specification/Singularis.Specification.Domain/        
+        nuget_key: ${{secrets.NUGET_SECRET}}
+    - name: Publish Singularis.Specification.Domain
+      uses: rohith/publish-nuget@v1.2.0
+      with:
+        project_dir: src/Singularis.Specification/Singularis.Specification.Executor.Nhibernate/        
+        nuget_key: ${{secrets.NUGET_SECRET}}
