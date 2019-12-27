@@ -13,7 +13,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '2.2.207'
-        source-url: https://api.nuget.org/v3/index.json
+        source-url: https://www.nuget.org/api/v2/package
       env:
         NUGET_AUTH_TOKEN: ${{secrets.NUGET_SECRET}}
     - name: Build
@@ -21,8 +21,8 @@ jobs:
     - name: Pack Singularis.Specification.Domain
       run: dotnet pack --configuration Release src/Singularis.Specification/Singularis.Specification.Domain/Singularis.Specification.Domain.csproj
     - name: Publish Singularis.Specification.Domain
-      run: dotnet nuget push src/Singularis.Specification/Singularis.Specification.Domain/bin/Release/*.nupkg -s https://api.nuget.org/v3/index.json
+      run: dotnet nuget push src/Singularis.Specification/Singularis.Specification.Domain/bin/Release/*.nupkg -s https://www.nuget.org/api/v2/package
     - name: Pack Singularis.Specification.Executor.Nhibernate
       run: dotnet pack --configuration Release src/Singularis.Specification/Singularis.Specification.Executor.Nhibernate/Singularis.Specification.Executor.Nhibernate.csproj
     - name: Singularis.Specification.Executor.Nhibernate
-      run: dotnet nuget push src/Singularis.Specification/Singularis.Specification.Executor.Nhibernate/bin/RElease/*.nupkg -s https://api.nuget.org/v3/index.json
+      run: dotnet nuget push src/Singularis.Specification/Singularis.Specification.Executor.Nhibernate/bin/RElease/*.nupkg -s https://www.nuget.org/api/v2/package
