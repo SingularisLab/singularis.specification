@@ -15,7 +15,7 @@ jobs:
         dotnet-version: '2.2.207'
       env:
         NUGET_AUTH_TOKEN: ${{secrets.NUGET_SECRET}}
-    - run: dotnet build src/Singularis.Specification/Singularis.Specification.sln"        
+    - run: dotnet build "src/Singularis.Specification/Singularis.Specification.sln"        
     - name: Pack Singularis.Specification.Domain
       run: dotnet pack --configuration Release src/Singularis.Specification/Singularis.Specification.Domain/Singularis.Specification.Domain.csproj
     - name: Publish Singularis.Specification.Domain
