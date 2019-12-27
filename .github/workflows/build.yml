@@ -17,9 +17,11 @@ jobs:
       uses: rohith/publish-nuget@v1.2.0
       with:
         project_dir: src/Singularis.Specification/Singularis.Specification.Domain/        
+        tag_format: v*
         nuget_key: ${{secrets.NUGET_SECRET}}
     - name: Publish Singularis.Specification.Domain
       uses: rohith/publish-nuget@v1.2.0
       with:
         project_dir: src/Singularis.Specification/Singularis.Specification.Executor.Nhibernate/        
+        tag_format: v*
         nuget_key: ${{secrets.NUGET_SECRET}}
