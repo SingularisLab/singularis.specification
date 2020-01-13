@@ -17,9 +17,9 @@ jobs:
       env:
         NUGET_AUTH_TOKEN: ${{secrets.NUGET_SECRET}}
     - name: Build
-      run: dotnet build --framework=netstandard2.0 --configuration Release "src/Singularis.Specification/Singularis.Specification.sln"    
+      run: dotnet build --force --configuration Release "src/Singularis.Specification/Singularis.Specification.sln"    
     - name: Pack Singularis.Specification.Domain
-      run: dotnet pack --framework=netstandard2.0 --configuration Release src/Singularis.Specification/Singularis.Specification.Domain/Singularis.Specification.Domain.csproj
+      run: dotnet pack --configuration Release src/Singularis.Specification/Singularis.Specification.Domain/Singularis.Specification.Domain.csproj
     - name: Publish Singularis.Specification.Domain
       run: dotnet nuget push src/Singularis.Specification/Singularis.Specification.Domain/bin/Release/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_SECRET}}
     - name: Pack Singularis.Specification.Executor.Nhibernate
