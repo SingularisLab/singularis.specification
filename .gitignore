@@ -4,3 +4,15 @@ src/Singularis.Specification/.idea/.idea.Singularis.Specification/.idea/modules.
 src/Singularis.Specification/.idea/.idea.Singularis.Specification/riderModule.iml
 src/Singularis.Specification/.idea/.idea.Singularis.Specification/.idea/workspace.xml
 src/Singularis.Specification/.idea/.idea.Singularis.Specification/.idea/contentModel.xml
+
+src/Singularis.Specification/.vs/Singularis.Specification/DesignTimeBuild/
+
+src/Singularis.Specification/.vs/Singularis.Specification/v15/Server/sqlite3/
+
+src/Singularis.Specification/Singularis.Specification.Domain/bin/Debug/netcoreapp2.1/
+
+src/Singularis.Specification/Singularis.Specification.Domain/bin/Debug/netstandard2.0/
+
+src/Singularis.Specification/Singularis.Specification.Executor.Nhibernate/bin/Debug/netcoreapp2.1/
+
+src/Singularis.Specification/Singularis.Specification.Executor.Nhibernate/bin/Debug/netstandard2.0/
