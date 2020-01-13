@@ -1,0 +1,28 @@
+name: build and publish
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install sdk
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '2.2.207'
+        source-url: https://www.nuget.org/api/v2/package
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.NUGET_SECRET}}
+    - name: Build
+      run: dotnet build "src/Singularis.Specification/Singularis.Specification.sln"        
+    - name: Pack Singularis.Specification.Domain
+      run: dotnet pack --configuration Release src/Singularis.Specification/Singularis.Specification.Domain/Singularis.Specification.Domain.csproj
+    - name: Publish Singularis.Specification.Domain
+      run: dotnet nuget push src/Singularis.Specification/Singularis.Specification.Domain/bin/Release/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_SECRET}}
+    - name: Pack Singularis.Specification.Executor.Nhibernate
+      run: dotnet pack --configuration Release src/Singularis.Specification/Singularis.Specification.Executor.Nhibernate/Singularis.Specification.Executor.Nhibernate.csproj
+    - name: Singularis.Specification.Executor.Nhibernate
+      run: dotnet nuget push src/Singularis.Specification/Singularis.Specification.Executor.Nhibernate/bin/Release/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_SECRET}}
