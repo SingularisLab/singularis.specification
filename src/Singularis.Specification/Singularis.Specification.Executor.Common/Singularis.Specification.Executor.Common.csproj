@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	  <AssemblyVersion>2.0.0.0</AssemblyVersion>
+	  <Version>2.0.0.0</Version>
+	  <PackageProjectUrl>https://github.com/anatoly-kryzhanovsky/singularis.specification</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/anatoly-kryzhanovsky/singularis.specification</RepositoryUrl>
+	  <RepositoryType>GitHub</RepositoryType>
+	  <PackageLicenseUrl>https://github.com/anatoly-kryzhanovsky/singularis.specification/blob/master/LICENSE</PackageLicenseUrl>
+	  <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+	</PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Singularis.Specification.Definition\Singularis.Specification.Definition.csproj" />
+  </ItemGroup>
+
+</Project>

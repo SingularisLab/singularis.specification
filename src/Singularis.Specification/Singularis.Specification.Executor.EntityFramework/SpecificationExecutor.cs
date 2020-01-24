@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using NHibernate;
-using NHibernate.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Singularis.Specification.Definition;
 using Singularis.Specification.Definition.Query;
 using Singularis.Specification.Definition.QueryParameters;
 using Singularis.Specification.Executor.Common;
-using ReflectionHelper = Singularis.Specification.Executor.Common.ReflectionHelper;
 
-namespace Singularis.Specification.Executor.Nhibernate
+namespace Singularis.Specification.Executor.EntityFramework
 {
 	class SpecificationExecutor
 	{
@@ -29,18 +27,17 @@ namespace Singularis.Specification.Executor.Nhibernate
 		private static readonly MethodInfo TakeWhileMethodInfo;
 		private static readonly MethodInfo GroupByMethodInfo;
 		private static readonly MethodInfo FetchMethodInfo;
-		private static readonly MethodInfo FetchManyMethodInfo;
 		private static readonly MethodInfo ThenFetchMethodInfo;
-		private static readonly MethodInfo ThenFetchManyMethodInfo;
+		private static readonly MethodInfo ThenFetchAfterCollectionMethodInfo;
 		private static readonly MethodInfo JoinMethodInfo;
 
 		static SpecificationExecutor()
 		{
 			QueryMethodInfo = ReflectionHelper.FindMethod(
 				BindingFlags.Public | BindingFlags.Instance,
-				typeof(ISession),
-				nameof(ISession.Query),
-				null);
+				typeof(DbContext),
+				nameof(DbContext.Set),
+				true);
 
 			WhereMethodInfo = ReflectionHelper.FindMethod(
 				BindingFlags.Static | BindingFlags.Public,
@@ -132,34 +129,28 @@ namespace Singularis.Specification.Executor.Nhibernate
 
 			FetchMethodInfo = ReflectionHelper.FindMethod(
 				BindingFlags.Static | BindingFlags.Public,
-				typeof(EagerFetchingExtensionMethods),
-				nameof(EagerFetchingExtensionMethods.Fetch),
+				typeof(EntityFrameworkQueryableExtensions),
+				nameof(EntityFrameworkQueryableExtensions.Include),
 				null,
 				new ArgumentConstraint(typeof(IQueryable<>), 1),
 				new ArgumentConstraint(typeof(Expression<>).MakeGenericType(typeof(Func<,>)), 2));
 
-			FetchManyMethodInfo = ReflectionHelper.FindMethod(
-				BindingFlags.Static | BindingFlags.Public,
-				typeof(EagerFetchingExtensionMethods),
-				nameof(EagerFetchingExtensionMethods.FetchMany),
-				null,
-				new ArgumentConstraint(typeof(IQueryable<>), 1),
-				new ArgumentConstraint(typeof(Expression<>).MakeGenericType(typeof(Func<,>)), 2));
+			ThenFetchMethodInfo = typeof(EntityFrameworkQueryableExtensions)
+				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.Where(x => x.Name == nameof(EntityFrameworkQueryableExtensions.ThenInclude))
+				.First(x =>
+				{
+					var arguments = x.GetParameters();
+					var includableQuerySecondArguments = arguments.First().ParameterType.GetGenericArguments().ElementAt(1);
+					return !includableQuerySecondArguments.IsGenericType || !(typeof(IEnumerable<>).IsAssignableFrom(includableQuerySecondArguments.GetGenericTypeDefinition()));
+				});
 
-			ThenFetchMethodInfo = ReflectionHelper.FindMethod(
+			ThenFetchAfterCollectionMethodInfo = ReflectionHelper.FindMethod(
 				BindingFlags.Static | BindingFlags.Public,
-				typeof(EagerFetchingExtensionMethods),
-				nameof(EagerFetchingExtensionMethods.ThenFetch),
+				typeof(EntityFrameworkQueryableExtensions),
+				nameof(EntityFrameworkQueryableExtensions.ThenInclude),
 				null,
-				new ArgumentConstraint(typeof(INhFetchRequest<,>), 1),
-				new ArgumentConstraint(typeof(Expression<>).MakeGenericType(typeof(Func<,>)), 2));
-
-			ThenFetchManyMethodInfo = ReflectionHelper.FindMethod(
-				BindingFlags.Static | BindingFlags.Public,
-				typeof(EagerFetchingExtensionMethods),
-				nameof(EagerFetchingExtensionMethods.ThenFetchMany),
-				null,
-				new ArgumentConstraint(typeof(INhFetchRequest<,>), 1),
+				new ArgumentConstraint(typeof(IIncludableQueryable<,>), 1),
 				new ArgumentConstraint(typeof(Expression<>).MakeGenericType(typeof(Func<,>)), 2));
 
 			JoinMethodInfo = ReflectionHelper.FindMethod(
@@ -174,33 +165,33 @@ namespace Singularis.Specification.Executor.Nhibernate
 				new ArgumentConstraint(typeof(Expression<>).MakeGenericType(typeof(Func<,,>)), 2));
 		}
 
-		public IQueryable<T> ExecuteSpecification<T>(ISession session, ISpecification specification)
+		public IQueryable<T> ExecuteSpecification<T>(DbContext context, ISpecification specification)
 		{
-			var queryable = CreateQueryable(session, (Query)specification.Query);
+			var queryable = CreateQueryable(context, (Query)specification.Query);
 			return ((IQueryable<T>)queryable);
 		}
 
-		public IQueryable ExecuteSpecification(ISession session, ISpecification specification)
+		public IQueryable ExecuteSpecification(DbContext dbContext, ISpecification specification)
 		{
-			var queryable = CreateQueryable(session, (Query)specification.Query);
+			var queryable = CreateQueryable(dbContext, (Query)specification.Query);
 			return queryable;
 		}
 
-		internal IQueryable CreateQueryable(ISession session, Query query)
+		internal IQueryable CreateQueryable(DbContext dbContext, Query query)
 		{
 			var queryType = GetQueryType(query);
 			var chain = GetQueryChain(query);
 
 			var result = QueryMethodInfo
 				.MakeGenericMethod(queryType)
-				.Invoke(session, null) as IQueryable;
+				.Invoke(dbContext, null) as IQueryable;
 
 			foreach (var part in chain)
 			{
 				switch (part.QueryType)
 				{
 					case QueryType.Where:
-						result = ApplyWhereExpression(session, result, part);
+						result = ApplyWhereExpression(dbContext, result, part);
 						break;
 
 					case QueryType.Projection:
@@ -252,7 +243,7 @@ namespace Singularis.Specification.Executor.Nhibernate
 						break;
 
 					case QueryType.Join:
-						result = ApplyJoinExpression(session, result, part);
+						result = ApplyJoinExpression(dbContext, result, part);
 						break;
 				}
 			}
@@ -293,22 +284,22 @@ namespace Singularis.Specification.Executor.Nhibernate
 			return chain;
 		}
 
-		private IQueryable ApplyWhereExpression(ISession session, IQueryable source, QueryParameter queryExpression)
+		private IQueryable ApplyWhereExpression(DbContext dbContext, IQueryable source, QueryParameter queryExpression)
 		{
 			var parameters = (WhereQueryParameter)queryExpression;
-			var where = WhereMethodInfo.MakeGenericMethod(parameters.InType);
+			var action = WhereMethodInfo.MakeGenericMethod(parameters.InType);
 
 			var expression = (LambdaExpression)parameters.Expression;
 			if (expression.Parameters.Any(x => x.Type == typeof(IQueryContext)))
 			{
 				var entityArgument = expression.Parameters.First(x => x.Type == parameters.InType);
-				var visiter = new SourceReplacerVisitor(q => CreateQueryable(session, (Query)q));
+				var visiter = new SourceReplacerVisitor(q => CreateQueryable(dbContext, (Query)q));
 				var updatedExpression = (LambdaExpression)visiter.Visit(expression);
 
 				expression = Expression.Lambda(updatedExpression.Body, entityArgument);
 			}
 
-			return (IQueryable)where.Invoke(source, new object[] { source, expression });
+			return (IQueryable)action.Invoke(source, new object[] { source, expression });
 		}
 
 		private IQueryable ApplyProjectionExpression(IQueryable source, QueryParameter queryExpression)
@@ -384,54 +375,36 @@ namespace Singularis.Specification.Executor.Nhibernate
 		private IQueryable ApplyFetchExpression(IQueryable source, QueryParameter queryExpression)
 		{
 			var parameters = (FetchParameter)queryExpression;
-			MethodInfo action;
-			Expression expression;
-			if (typeof(IEnumerable).IsAssignableFrom(parameters.FetchType))
-			{
-				var fetchItemType = parameters.FetchType.GetGenericArguments().First();
-				action = FetchManyMethodInfo.MakeGenericMethod(parameters.InType, fetchItemType);
-				var selectorExpression = ((LambdaExpression)parameters.Expression);
-				expression = Expression.Lambda(
-					Expression.Convert(selectorExpression.Body, typeof(IEnumerable<>).MakeGenericType(fetchItemType)),
-					selectorExpression.Parameters);
-			}
-			else
-			{
-				action = FetchMethodInfo.MakeGenericMethod(parameters.InType, parameters.FetchType);
-				expression = parameters.Expression;
-			}
+			var action = FetchMethodInfo.MakeGenericMethod(parameters.InType, parameters.FetchType);
+			return (IQueryable)action.Invoke(source, new object[] { source, parameters.Expression });
+		}
 
-			return (IQueryable)action.Invoke(source, new object[] { source, expression });
+		private IQueryable ApplyFetchManyExpression(IQueryable source, QueryParameter queryExpression)
+		{
+			var parameters = (FetchManyParameter)queryExpression;
+			var action = FetchMethodInfo.MakeGenericMethod(parameters.InType, parameters.FetchCollectionType);
+			return (IQueryable)action.Invoke(source, new object[] { source, parameters.Expression });
 		}
 
 		private IQueryable ApplyThenFetchExpression(IQueryable source, QueryParameter queryExpression)
 		{
 			var parameters = (ThenFetchParameter)queryExpression;
 			MethodInfo action;
-			Expression expression;
-			if (typeof(IEnumerable).IsAssignableFrom(parameters.FetchType))
+			if (parameters.ParentIsCollection)
 			{
-				var fetchItemType = parameters.FetchType.GetGenericArguments().First();
-				action = ThenFetchManyMethodInfo.MakeGenericMethod(parameters.InType, parameters.ParentType, fetchItemType);
-				var selectorExpression = ((LambdaExpression)parameters.Expression);
-				expression = Expression.Lambda(
-					Expression.Convert(selectorExpression.Body, typeof(IEnumerable<>).MakeGenericType(fetchItemType)),
-					selectorExpression.Parameters);
+				action = ThenFetchAfterCollectionMethodInfo.MakeGenericMethod(parameters.RootType, parameters.ParentType, parameters.FetchType);
 			}
 			else
-			{
-				action = ThenFetchMethodInfo.MakeGenericMethod(parameters.InType, parameters.ParentType, parameters.FetchType);
-				expression = parameters.Expression;
-			}
+				action = ThenFetchMethodInfo.MakeGenericMethod(parameters.RootType, parameters.ParentType, parameters.FetchType);
 
-			return (IQueryable)action.Invoke(source, new object[] { source, expression });
+			return (IQueryable)action.Invoke(source, new object[] { source, parameters.Expression });
 		}
 
-		private IQueryable ApplyJoinExpression(ISession session, IQueryable source, QueryParameter queryExpression)
+		private IQueryable ApplyJoinExpression(DbContext dbContext, IQueryable source, QueryParameter queryExpression)
 		{
 			var parameters = (JoinQueryParameter)queryExpression;
 			var action = JoinMethodInfo.MakeGenericMethod(parameters.OuterType, parameters.InnerType, parameters.KeyType, parameters.OutType);
-			var innerSource = CreateQueryable(session, (Query)parameters.InnerSource);
+			var innerSource = CreateQueryable(dbContext, (Query)parameters.InnerSource);
 
 			return (IQueryable)action.Invoke(source, new object[] {
 				source,
