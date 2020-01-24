@@ -1,8 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Singularis.Specification.Domain", "Singularis.Specification.Domain\Singularis.Specification.Domain.csproj", "{2253D622-9ED8-469A-978F-630AC39CE605}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.757
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Singularis.Specification.Definition", "Singularis.Specification.Definition\Singularis.Specification.Definition.csproj", "{2253D622-9ED8-469A-978F-630AC39CE605}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Singularis.Specification.Executor.Nhibernate", "Singularis.Specification.Executor.Nhibernate\Singularis.Specification.Executor.Nhibernate.csproj", "{03D555C9-D63E-47DD-A40C-E745CCC72E24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Singularis.Specification.Executor.Nhibernate", "Singularis.Specification.Executor.Nhibernate\Singularis.Specification.Executor.Nhibernate.csproj", "{03D555C9-D63E-47DD-A40C-E745CCC72E24}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Singularis.Specification.Executor.EntityFramework", "Singularis.Specification.Executor.EntityFramework\Singularis.Specification.Executor.EntityFramework.csproj", "{03D555C9-D63E-47DD-A40C-E745CCC72E25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Singularis.Specification.Executor.Common", "Singularis.Specification.Executor.Common\Singularis.Specification.Executor.Common.csproj", "{309D17EA-585F-4F48-B039-165D6DE6B904}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Singularis.Specification.Test", "Singularis.Specification.Test\Singularis.Specification.Test.csproj", "{48C6E9C6-FF8D-46CC-835C-C072C7A2CE64}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{3CA4D7C3-B3B9-43AA-83A1-0BE94F62D165}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Singularis.Specification.Demo", "Singularis.Specification.Demo\Singularis.Specification.Demo.csproj", "{3D3A6189-8565-4585-A04B-B75768A2B91F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +31,30 @@ Global
 		{03D555C9-D63E-47DD-A40C-E745CCC72E24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03D555C9-D63E-47DD-A40C-E745CCC72E24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03D555C9-D63E-47DD-A40C-E745CCC72E24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03D555C9-D63E-47DD-A40C-E745CCC72E25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03D555C9-D63E-47DD-A40C-E745CCC72E25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03D555C9-D63E-47DD-A40C-E745CCC72E25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03D555C9-D63E-47DD-A40C-E745CCC72E25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{309D17EA-585F-4F48-B039-165D6DE6B904}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{309D17EA-585F-4F48-B039-165D6DE6B904}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{309D17EA-585F-4F48-B039-165D6DE6B904}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{309D17EA-585F-4F48-B039-165D6DE6B904}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48C6E9C6-FF8D-46CC-835C-C072C7A2CE64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48C6E9C6-FF8D-46CC-835C-C072C7A2CE64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48C6E9C6-FF8D-46CC-835C-C072C7A2CE64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48C6E9C6-FF8D-46CC-835C-C072C7A2CE64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D3A6189-8565-4585-A04B-B75768A2B91F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D3A6189-8565-4585-A04B-B75768A2B91F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D3A6189-8565-4585-A04B-B75768A2B91F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D3A6189-8565-4585-A04B-B75768A2B91F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3D3A6189-8565-4585-A04B-B75768A2B91F} = {3CA4D7C3-B3B9-43AA-83A1-0BE94F62D165}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FBBF5D35-80E9-43F3-BAB9-B3F0BBDE9D95}
 	EndGlobalSection
 EndGlobal
